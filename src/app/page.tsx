@@ -46,7 +46,7 @@ export default function Home() {
             <Image
               className="dark:invert mx-2 mb-4"
               src="https://static.wixstatic.com/media/bd2e29_695f70787cc24db4891e63da7e7529b3~mv2.png"
-              alt="Adorable Logo"
+              alt="FF Logo"
               width={48}
               height={48}
             />

@@ -9,6 +9,9 @@ const nextConfig: NextConfig = {
     ignoreDuringBuilds: true,
   },
   devIndicators: false,
+  images: {
+    domains: ["static.wixstatic.com", "images.pexels.com"],
+  },
 };
 
 export default nextConfig;

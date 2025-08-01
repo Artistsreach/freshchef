@@ -15,6 +15,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "./ui/dialog";
+import { ModeToggle } from "./theme-toggle";
 
 export function TopBar({
   appName,
@@ -33,9 +34,12 @@ export function TopBar({
 
   return (
     <div className="h-12 sticky top-0 flex items-center px-4 border-b border-gray-200 bg-background justify-between">
-      <Link href={"/"}>
-        <HomeIcon className="h-5 w-5" />
-      </Link>
+      <div className="flex items-center gap-4">
+        <Link href={"/"}>
+          <HomeIcon className="h-5 w-5" />
+        </Link>
+        <ModeToggle />
+      </div>
 
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogTrigger asChild>

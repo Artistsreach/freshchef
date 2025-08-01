@@ -13,6 +13,7 @@ export async function getUserApps() {
       id: appsTable.id,
       name: appsTable.name,
       description: appsTable.description,
+      imageUrl: appsTable.imageUrl,
       gitRepo: appsTable.gitRepo,
       createdAt: appsTable.createdAt,
       permissions: appUsers.permissions,

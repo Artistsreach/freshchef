@@ -1,16 +1,11 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { ChevronDownIcon } from "lucide-react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { templates } from "@/lib/templates";
+import { useTheme } from "next-themes";
+import { useEffect, useState } from "react";
 
 type FrameworkSelectorProps = {
   value?: keyof typeof templates;
@@ -23,50 +18,50 @@ export function FrameworkSelector({
   onChange,
   className,
 }: FrameworkSelectorProps) {
+  const { theme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   return (
-    <div className={cn("relative", className)}>
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
+    <div className={cn("flex justify-center gap-2 my-4", className)}>
+      {Object.entries(templates).map(([key, template]) => {
+        const logo =
+          typeof template.logo === "string"
+            ? template.logo
+            : theme === "dark"
+            ? template.logo.dark
+            : template.logo.light;
+        return (
           <Button
+            key={key}
             variant="outline"
             size="sm"
-            className="h-7 gap-2 px-2 text-xs bg-transparent border-none hover:bg-gray-100 hover:bg-opacity-50 shadow-none"
-            style={{ boxShadow: "none" }}
+            className={cn(
+              "h-7 gap-2 px-3 text-xs rounded-full",
+              value === key && "pulse-glow"
+            )}
+            onClick={() => onChange(key)}
           >
             <Image
-              src={templates[value].logo}
-              alt={templates[value].name}
+              src={
+                mounted
+                  ? logo
+                  : typeof template.logo === "string"
+                  ? template.logo
+                  : template.logo.light
+              }
+              alt={template.name}
               width={16}
               height={16}
               className="opacity-90"
             />
-            {templates[value].name}
-            <ChevronDownIcon className="h-3 w-3 opacity-70" />
+            {template.name}
           </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent
-          align="start"
-          className="min-w-[8rem] !shadow-none border border-gray-200"
-          style={{ boxShadow: "none" }}
-        >
-          {Object.entries(templates).map(([key, template]) => (
-            <DropdownMenuItem
-              key={key}
-              onClick={() => onChange(key)}
-              className="gap-2 text-xs"
-            >
-              <Image
-                src={template.logo}
-                alt={template.name}
-                width={16}
-                height={16}
-                className="opacity-90"
-              />
-              {templates[key].name}
-            </DropdownMenuItem>
-          ))}
-        </DropdownMenuContent>
-      </DropdownMenu>
+        );
+      })}
     </div>
   );
 }

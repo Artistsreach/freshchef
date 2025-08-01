@@ -5,6 +5,7 @@ import Image from "next/image";
 import { PromptInputBasic } from "./chatinput";
 import { Markdown } from "./ui/markdown";
 import { useState } from "react";
+import { Button } from "./ui/button";
 import { ChatContainer } from "./ui/chat-container";
 import { UIMessage } from "ai";
 import { ToolMessage } from "./tools";
@@ -116,10 +117,36 @@ export default function Chat(props: {
         </ChatContainer>
       </div>
       <div className="flex-shrink-0 p-3 transition-all bg-background md:backdrop-blur-sm">
+        {props.isLoading || chat?.state === "running" ? null : (
+          <div className="flex justify-center">
+            <Button
+              onClick={() =>
+                sendMessage(
+                  {
+                    parts: [
+                      {
+                        type: "text",
+                        text: "continue",
+                      },
+                    ],
+                  },
+                  {
+                    headers: {
+                      "Adorable-App-Id": props.appId,
+                    },
+                  }
+                )
+              }
+              className="mb-4"
+            >
+              Continue
+            </Button>
+          </div>
+        )}
         <PromptInputBasic
           stop={handleStop}
           input={input}
-          onValueChange={(value) => {
+          onValueChange={(value: string) => {
             setInput(value);
           }}
           onSubmit={onSubmit}

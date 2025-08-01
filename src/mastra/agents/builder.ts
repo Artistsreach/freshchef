@@ -30,7 +30,7 @@ export const memory = new Memory({
 
 export const builderAgent = new Agent({
   name: "BuilderAgent",
-  model: anthropic("claude-3-7-sonnet-20250219"),
+  model: anthropic("claude-4-sonnet-20250514"),
   instructions: SYSTEM_MESSAGE,
   memory,
   tools: {
@@ -46,8 +46,26 @@ export const builderAgent = new Agent({
           })
         ),
       }),
-      execute: async ({}) => {
-        return {};
+      outputSchema: z.object({
+        success: z.boolean(),
+      }),
+      execute: async ({ writer }) => {
+        if (writer) {
+          writer.write({
+            type: "update-todo-list",
+            status: "pending",
+          });
+        }
+        // In a real application, you would save the todo list to a database here.
+        // For this example, we'll just log it to the console.
+        console.log("Updating todo list...");
+        if (writer) {
+          writer.write({
+            type: "update-todo-list",
+            status: "success",
+          });
+        }
+        return { success: true };
       },
     }),
   },

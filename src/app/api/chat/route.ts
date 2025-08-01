@@ -90,9 +90,8 @@ export async function sendMessage(
 
   const toolsets = await mcp.getToolsets();
 
-  await (
-    await builderAgent.getMemory()
-  )?.saveMessages({
+  const memory = await builderAgent.getMemory();
+  await memory?.saveMessages({
     messages: [
       {
         content: {
@@ -123,8 +122,10 @@ export async function sendMessage(
   });
 
   const stream = await builderAgent.stream([], {
-    threadId: appId,
-    resourceId: appId,
+    memory: {
+      thread: { id: appId },
+      resource: appId,
+    },
     maxSteps: 100,
     maxRetries: 0,
     maxOutputTokens: 64000,
@@ -145,7 +146,8 @@ export async function sendMessage(
         controller.abort("Aborted stream after step finish");
         const messages = messageList.drainUnsavedMessages();
         console.log(messages);
-        await builderAgent.getMemory()?.saveMessages({
+        const memory = await builderAgent.getMemory();
+        await memory?.saveMessages({
           messages,
         });
       }
@@ -164,5 +166,5 @@ export async function sendMessage(
 
   console.log("Stream created for appId:", appId, "with prompt:", message);
 
-  return await setStream(appId, message, stream);
+  return await setStream(appId, message, stream as any);
 }

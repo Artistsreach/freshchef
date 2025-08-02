@@ -1,4 +1,4 @@
-import { GOOGLE_GENERATIVE_AI_PROVIDER } from "@/lib/model";
+import { anthropic } from "@ai-sdk/anthropic";
 import { SYSTEM_MESSAGE } from "@/lib/system";
 import { Agent } from "@mastra/core/agent";
 import { createTool } from "@mastra/core/tools";
@@ -30,14 +30,7 @@ export const memory = new Memory({
 
 export const builderAgent = new Agent({
   name: "BuilderAgent",
-<<<<<<< HEAD
-  model: anthropic("claude-4-sonnet-20250514"),
-=======
-  model: {
-    ...GOOGLE_GENERATIVE_AI_PROVIDER("gemini-2.5-pro"),
-    supportedUrls: {},
-  },
->>>>>>> 0a45ea35ce6f0b00b8756a66ec156e0dd02cddca
+  model: anthropic("claude-3-7-sonnet-20250219"),
   instructions: SYSTEM_MESSAGE,
   memory,
   tools: {

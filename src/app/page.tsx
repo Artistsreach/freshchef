@@ -46,11 +46,11 @@ export default function Home() {
             <Image
               className="dark:invert mx-2 mb-4"
               src="https://static.wixstatic.com/media/bd2e29_695f70787cc24db4891e63da7e7529b3~mv2.png"
-              alt="FF Logo"
+              alt="Adorable Logo"
               width={48}
               height={48}
             />
-            <p className="text-neutral-800 dark:text-neutral-300 text-center mb-6 text-2xl sm:text-3xl md:text-4xl font-bold">
+            <p className="text-neutral-600 text-center mb-6 text-2xl sm:text-3xl md:text-4xl font-bold">
               What do you want to build?
             </p>
 

@@ -120,7 +120,7 @@ export function PromptInputBasic({
         <PromptInputTextarea
           placeholder={
             isGenerating
-              ? "Agent is working..."
+              ? "Adorable is working..."
               : isCompressing
                 ? "Compressing images..."
                 : "Type your message here..."

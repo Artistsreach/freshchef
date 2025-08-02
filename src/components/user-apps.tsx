@@ -17,12 +17,11 @@ export function UserApps() {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 px-4 sm:px-8">
       {data.map((app) => (
-        <AppCard
+        <AppCard 
           key={app.id}
           id={app.id}
           name={app.name}
           createdAt={app.createdAt}
-          imageUrl={app.imageUrl}
           onDelete={onAppDeleted}
         />
       ))}

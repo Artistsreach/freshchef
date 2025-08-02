@@ -5,7 +5,6 @@ import { getUser } from "@/auth/stack-auth";
 import { appsTable, appUsers } from "@/db/schema";
 import { db } from "@/lib/db";
 import { freestyle } from "@/lib/freestyle";
-import { getPexelsImage } from "@/lib/pexels";
 import { templates } from "@/lib/templates";
 import { memory } from "@/mastra/agents/builder";
 
@@ -54,15 +53,12 @@ export async function createApp({
   console.timeEnd("dev server");
 
   console.time("database: create app");
-  const imageUrl = initialMessage ? await getPexelsImage(initialMessage) : null;
-
   const app = await db.transaction(async (tx) => {
     const appInsertion = await tx
       .insert(appsTable)
       .values({
         gitRepo: repo.repoId,
         name: initialMessage,
-        imageUrl: imageUrl,
       })
       .returning();
 

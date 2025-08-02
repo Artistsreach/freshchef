@@ -10,7 +10,7 @@ const nextConfig: NextConfig = {
   },
   devIndicators: false,
   images: {
-    domains: ["static.wixstatic.com", "images.pexels.com"],
+    domains: ["static.wixstatic.com"],
   },
 };
 

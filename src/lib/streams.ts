@@ -11,14 +11,12 @@ const streamContext = createResumableStreamContext({
 });
 
 export async function stopStream(appId: string) {
-  if (redisPublisher) {
-    await redisPublisher.publish(
-      "events:" + appId,
-      JSON.stringify({
-        type: "abort-stream",
-      })
-    );
-  }
+  await redisPublisher.publish(
+    "events:" + appId,
+    JSON.stringify({
+      type: "abort-stream",
+    })
+  );
 }
 
 export async function getStream(appId: string) {
@@ -60,9 +58,7 @@ export async function setStream(
     );
   }
 
-  if (redisPublisher) {
-    await redisPublisher.set(`app:${appId}:stream-state`, "running", { EX: 15 });
-  }
+  await redisPublisher.set(`app:${appId}:stream-state`, "running", { EX: 15 });
 
   const resumableStream = await streamContext.createNewResumableStream(
     appId,
@@ -95,13 +91,11 @@ export async function setStream(
 }
 
 export async function getAbortCallback(appId: string, callback: () => void) {
-  if (redis) {
-    redis.subscribe("events:" + appId, (event) => {
-      const data = JSON.parse(event);
-      if (data.type === "abort-stream") {
-        console.log("Stream aborted for appId:", appId);
-        callback();
-      }
-    });
-  }
+  redis.subscribe("events:" + appId, (event) => {
+    const data = JSON.parse(event);
+    if (data.type === "abort-stream") {
+      console.log("Stream aborted for appId:", appId);
+      callback();
+    }
+  });
 }

@@ -1,5 +1,5 @@
-import { anthropic } from "@ai-sdk/anthropic";
 import { SYSTEM_MESSAGE } from "@/lib/system";
+import { anthropic } from "@ai-sdk/anthropic";
 import { Agent } from "@mastra/core/agent";
 import { createTool } from "@mastra/core/tools";
 import { Memory } from "@mastra/memory";
@@ -22,7 +22,7 @@ export const memory = new Memory({
   }),
   processors: [
     // new ToolCallFilter({
-    //   exclude: ["read_.file", "read_multiple_files"],
+    //   exclude: ["read_file", "read_multiple_files"],
     // }),
     // new TokenLimiter(100_000),
   ],
@@ -30,7 +30,7 @@ export const memory = new Memory({
 
 export const builderAgent = new Agent({
   name: "BuilderAgent",
-  model: anthropic("claude-3-7-sonnet-20250219"),
+  model: anthropic("claude-4-sonnet-20250514"),
   instructions: SYSTEM_MESSAGE,
   memory,
   tools: {

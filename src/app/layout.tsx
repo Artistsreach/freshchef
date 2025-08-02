@@ -21,6 +21,9 @@ export const metadata: Metadata = {
   title: "FreshFront",
   description: "AI No Code App Builder & Vibe Coder",
   manifest: "/manifest.json",
+  icons: {
+    icon: "/logos/favicon.svg",
+  },
   // viewport: {
   //   width: "device-width",
   //   initialScale: 1,

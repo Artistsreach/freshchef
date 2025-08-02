@@ -1,13 +1,17 @@
 import { createClient } from "redis";
 
-export const redis = await createClient({
-  url: process.env.REDIS_URL,
-})
-  .on("error", (err) => console.log("Redis Client Error", err))
-  .connect();
+const createRedisClient = async () => {
+  if (process.env.REDIS_URL) {
+    const client = await createClient({
+      url: process.env.REDIS_URL,
+    })
+      .on("error", (err) => console.log("Redis Client Error", err))
+      .connect();
+    return client;
+  }
+  return null;
+};
 
-export const redisPublisher = await createClient({
-  url: process.env.REDIS_URL,
-})
-  .on("error", (err) => console.log("Publisher Redis Client Error", err))
-  .connect();
+export const redis = await createRedisClient();
+
+export const redisPublisher = await createRedisClient();

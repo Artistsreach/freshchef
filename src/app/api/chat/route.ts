@@ -27,9 +27,9 @@ export async function POST(req: NextRequest) {
     return new Response("App not found", { status: 404 });
   }
 
-  const streamState = await redisPublisher.get(
-    "app:" + appId + ":stream-state"
-  );
+  const streamState = redisPublisher
+    ? await redisPublisher.get("app:" + appId + ":stream-state")
+    : null;
 
   if (streamState === "running") {
     console.log("Stopping previous stream for appId:", appId);
@@ -40,9 +40,9 @@ export async function POST(req: NextRequest) {
     let attempts = 0;
     while (attempts < maxAttempts) {
       await new Promise((resolve) => setTimeout(resolve, 500));
-      const updatedState = await redisPublisher.get(
-        "app:" + appId + ":stream-state"
-      );
+      const updatedState = redisPublisher
+        ? await redisPublisher.get("app:" + appId + ":stream-state")
+        : null;
       if (updatedState !== "running") {
         break;
       }
@@ -51,7 +51,9 @@ export async function POST(req: NextRequest) {
 
     // If stream is still running after max attempts, return an error
     if (attempts >= maxAttempts) {
-      await redisPublisher.del(`app:${appId}:stream-state`);
+      if (redisPublisher) {
+        await redisPublisher.del(`app:${appId}:stream-state`);
+      }
       return new Response(
         "Previous stream is still shutting down, please try again",
         { status: 429 }
@@ -133,16 +135,20 @@ export async function sendMessage(
     async onChunk() {
       if (Date.now() - lastKeepAlive > 5000) {
         lastKeepAlive = Date.now();
-        redisPublisher.set(`app:${appId}:stream-state`, "running", {
-          EX: 15,
-        });
+        if (redisPublisher) {
+          redisPublisher.set(`app:${appId}:stream-state`, "running", {
+            EX: 15,
+          });
+        }
       }
     },
     async onStepFinish(step) {
       messageList.add(step.response.messages, "response");
 
       if (shouldAbort) {
-        await redisPublisher.del(`app:${appId}:stream-state`);
+        if (redisPublisher) {
+          await redisPublisher.del(`app:${appId}:stream-state`);
+        }
         controller.abort("Aborted stream after step finish");
         const messages = messageList.drainUnsavedMessages();
         console.log(messages);
@@ -154,11 +160,15 @@ export async function sendMessage(
     },
     onError: async (error) => {
       await mcp.disconnect();
-      await redisPublisher.del(`app:${appId}:stream-state`);
+      if (redisPublisher) {
+        await redisPublisher.del(`app:${appId}:stream-state`);
+      }
       console.error("Error:", error);
     },
     onFinish: async () => {
-      await redisPublisher.del(`app:${appId}:stream-state`);
+      if (redisPublisher) {
+        await redisPublisher.del(`app:${appId}:stream-state`);
+      }
       await mcp.disconnect();
     },
     abortSignal: controller.signal,

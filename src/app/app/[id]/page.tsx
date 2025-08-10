@@ -4,13 +4,15 @@ import { getApp } from "@/actions/get-app";
 import AppWrapper from "../../../components/app-wrapper";
 import { freestyle } from "@/lib/freestyle";
 import { db } from "@/lib/db";
-import { appUsers } from "@/db/schema";
+import { appUsers, appsTable } from "@/db/schema";
 import { and, eq } from "drizzle-orm";
 import { getUser } from "@/auth/stack-auth";
 import { memory } from "@/mastra/agents/builder";
 import { buttonVariants } from "@/components/ui/button";
 import Link from "next/dist/client/link";
 import { chatState } from "@/actions/chat-streaming";
+import { CrowdfundButton } from "@/components/crowdfund-button";
+// The schema is already imported via the db import
 
 export default async function AppPage({
   params,
@@ -75,6 +77,28 @@ export default async function AppPage({
   // Use the previewDomain from the database, or fall back to a generated domain
   const domain = app.info.previewDomain;
 
+  // Check if the current user is the owner of the app
+  const user = await getUser();
+  const isOwner = user && (await db
+    .select()
+    .from(appUsers)
+    .where(
+      and(
+        eq(appUsers.userId, user.userId),
+        eq(appUsers.appId, id),
+        eq(appUsers.permissions, 'admin')
+      )
+    )
+  ).length > 0;
+
+  // Get the full app data with Stripe fields
+  const fullApp = await db.query.appsTable.findFirst({
+    where: (appsTable, { eq }) => eq(appsTable.id, id),
+  });
+
+  // Check if the app is already monetized
+  const isMonetized = fullApp?.isMonetized && fullApp.stripeProductId && fullApp.stripePriceId;
+
   return (
     <AppWrapper
       key={app.info.id}
@@ -88,6 +112,15 @@ export default async function AppPage({
       repoId={app.info.gitRepo}
       domain={domain ?? undefined}
       running={(await chatState(app.info.id)).state === "running"}
+      topBarActions={
+        app.info.public && isOwner && !isMonetized ? (
+          <CrowdfundButton 
+            appId={app.info.id} 
+            appName={app.info.name}
+            appDescription={app.info.description}
+          />
+        ) : null
+      }
       showRecreate={showRecreate}
       sourceAppId={app.info.id}
     />

@@ -19,6 +19,10 @@ export const appsTable = pgTable("apps", {
   baseId: text("base_id").notNull().default("nextjs-dkjfgdf"),
   previewDomain: text("preview_domain").unique(),
   public: boolean("public").notNull().default(false),
+  stripeProductId: text("stripe_product_id"),
+  stripePriceId: text("stripe_price_id"),
+  isMonetized: boolean("is_monetized").notNull().default(false),
+  subscriptionDetails: text("subscription_details"),
 });
 
 export const appPermissions = pgEnum("app_user_permission", [
